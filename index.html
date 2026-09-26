@@ -3,223 +3,213 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Home & Garden Pro | Concrete Garden Pots & Water Features</title>
+    <title>Home & Garden Pro | Concrete Garden Pieces in Harare</title>
     <meta
       name="description"
-      content="Premium concrete garden pots, sculptures and water features from Home & Garden Pro in Helensvale, Harare."
+      content="Concrete garden pots, sculptures and water features from Home & Garden Pro at Boxpark, Helensvale, Harare."
     />
+    <meta name="theme-color" content="#f7f6f1" />
     <link rel="icon" href="assets/favicon.ico" sizes="any" />
     <link rel="icon" href="assets/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="preload" href="assets/catalogue-poster.jpg" as="image" />
-    <link rel="preload" href="assets/hero-planters.jpg" as="image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" href="assets/home-garden-hero.webp" as="image" type="image/webp" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="cursor-light" aria-hidden="true"></div>
-    <header class="site-nav" data-reveal>
+    <div class="page-loader" aria-hidden="true">
+      <div class="loader-mark"><span></span></div>
+      <p>Home &amp; Garden Pro</p>
+    </div>
+
+    <header class="site-header" data-reveal="down">
       <a class="brand" href="#top" aria-label="Home & Garden Pro home">
-        <img src="assets/brand-lockup.jpg" alt="Home & Garden Pro logo" />
+        <img src="assets/brand-lockup.jpg" alt="Home & Garden Pro" />
       </a>
       <nav aria-label="Main navigation">
-        <a href="#studio">Studio</a>
-        <a href="#collection">Catalogue</a>
+        <a href="#collection">Collection</a>
+        <a href="#craft">Craft</a>
         <a href="#visit">Visit</a>
       </nav>
-      <a class="nav-cta" href="https://wa.me/263772302335">WhatsApp</a>
+      <a class="header-cta" href="https://wa.me/263772302335?text=Hello%20Home%20%26%20Garden%20Pro%2C%20may%20I%20see%20your%20current%20catalogue%3F">
+        <span>Get the catalogue</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </a>
     </header>
 
     <main id="top">
-      <section class="hero scene" aria-labelledby="hero-title">
-        <div class="hero-copy" data-reveal>
-          <p class="eyebrow">Zimbabwean garden pots, sculptures and water features</p>
-          <h1 id="hero-title">
-            Home & Garden Pro
-            <span>clean concrete pieces for Harare homes.</span>
-          </h1>
-          <p class="hero-text">
-            Simple, strong planters and water features made to bring shade, texture
-            and calm into everyday Zimbabwean spaces.
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-image" aria-hidden="true"></div>
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="hero-content">
+          <p class="eyebrow hero-kicker" data-reveal>Made in Zimbabwe. Made to belong.</p>
+          <h1 id="hero-title" data-reveal>Home &amp;<br />Garden Pro</h1>
+          <p class="hero-line" data-reveal>
+            Sculptural concrete pieces for gardens, courtyards and calm corners.
           </p>
-          <div class="hero-actions">
-            <a class="button primary" href="#collection">Explore pieces</a>
-            <a class="button ghost" href="#visit">Find the studio</a>
+          <div class="hero-actions" data-reveal>
+            <a class="button button-dark" href="#collection">Explore the collection</a>
+            <a class="text-link" href="#visit">Visit us in Helensvale <span aria-hidden="true">&#8595;</span></a>
           </div>
         </div>
-
-        <div class="hero-art" aria-label="Home & Garden Pro catalogue preview" data-reveal>
-          <figure class="poster">
-            <img src="assets/catalogue-poster.jpg" alt="Home & Garden Pro catalogue cover" />
-          </figure>
-          <div class="orbit-ring" aria-hidden="true">
-            <img src="assets/water-feature-black.jpg" alt="" />
-            <img src="assets/round-planters.jpg" alt="" />
-            <img src="assets/hamilton-black.jpg" alt="" />
-          </div>
-          <div class="availability">
-            <span>Open 24 hours</span>
-            <strong>18 Crowhill Rd, Boxpark</strong>
-          </div>
+        <div class="hero-note" data-reveal="left">
+          <span>01</span>
+          <p>Concrete. Water. Greenery.<br />Quietly considered.</p>
         </div>
-
-        <a class="scroll-cue" href="#studio" aria-label="Scroll to studio">
-          <span></span>
-          Scroll
+        <a class="scroll-mark" href="#manifesto" aria-label="Scroll to discover">
+          <span>Scroll to discover</span>
+          <i aria-hidden="true"></i>
         </a>
       </section>
 
-      <section id="studio" class="studio scene" aria-labelledby="studio-title">
-        <div class="section-heading" data-reveal>
-          <p class="eyebrow">Simple selection</p>
-          <h2 id="studio-title">Choose the shape, then let the garden breathe.</h2>
+      <section id="manifesto" class="manifesto section-shell" aria-labelledby="manifesto-title">
+        <div class="section-index" data-reveal>01 / Our point of view</div>
+        <div class="manifesto-copy">
+          <h2 id="manifesto-title" data-reveal>
+            Your garden does not need more noise.
+            <em>It needs one beautiful anchor.</em>
+          </h2>
+          <p data-reveal>
+            We specialise in high-quality concrete garden pots, sculptures and water
+            features designed to elevate indoor and outdoor spaces.
+          </p>
         </div>
-
-        <div class="composer">
-          <div class="water-stage" data-reveal>
-            <canvas id="rippleCanvas" aria-hidden="true"></canvas>
-            <div class="centerpiece">
-              <img id="activeProductImage" src="assets/water-feature-black.jpg" alt="Water feature" />
-            </div>
-            <button class="product-dot dot-a is-active" data-product="0">
-              <img src="assets/water-feature-black.jpg" alt="Water feature" />
-            </button>
-            <button class="product-dot dot-b" data-product="1">
-              <img src="assets/hamilton-black.jpg" alt="Hamilton Black planter" />
-            </button>
-            <button class="product-dot dot-c" data-product="2">
-              <img src="assets/curo-trough.jpg" alt="Curo Trough" />
-            </button>
-            <button class="product-dot dot-d" data-product="3">
-              <img src="assets/round-planters.jpg" alt="Round planters" />
-            </button>
-          </div>
-
-          <div class="composer-copy" data-reveal>
-            <p class="chapter">01 / Water, stone, leaf</p>
-            <h3 id="activeProductName">Water feature</h3>
-            <p id="activeProductText">
-              A low, meditative water piece for courtyards, patios and quiet entrances.
-            </p>
-            <div class="spec-strip">
-              <span id="activeProductPrice">US$450.00</span>
-              <span>Concrete finish</span>
-              <span>Indoor / outdoor</span>
-            </div>
-          </div>
+        <div class="material-notes" data-reveal>
+          <span>Form</span><i></i><span>Texture</span><i></i><span>Stillness</span>
         </div>
       </section>
 
-      <section id="collection" class="collection scene" aria-labelledby="collection-title">
-        <div class="collection-intro" data-reveal>
-          <p class="eyebrow">Catalogue selection</p>
-          <h2 id="collection-title">A clean catalogue of pots, troughs and water pieces.</h2>
+      <section id="craft" class="water-story" aria-labelledby="water-title">
+        <div class="water-copy section-shell">
+          <div class="section-index light" data-reveal>02 / A living surface</div>
+          <div class="water-heading">
+            <p class="eyebrow light" data-reveal>Move across the water</p>
+            <h2 id="water-title" data-reveal>Built from concrete.<br /><em>Finished with calm.</em></h2>
+          </div>
+          <p class="water-intro" data-reveal>
+            Every piece changes with its setting: sunlight on stone, leaves against
+            a textured finish, water softening a strong form.
+          </p>
+        </div>
+        <div class="ripple-field" id="rippleField">
+          <canvas id="rippleCanvas" aria-hidden="true"></canvas>
+          <div class="water-vessel" aria-hidden="true">
+            <span class="vessel-rim"></span>
+            <span class="vessel-body"></span>
+          </div>
+          <p>Touch the surface</p>
+        </div>
+      </section>
+
+      <section id="collection" class="collection section-shell" aria-labelledby="collection-title">
+        <div class="collection-head">
+          <div>
+            <div class="section-index" data-reveal>03 / Selected pieces</div>
+            <h2 id="collection-title" data-reveal>Objects with presence.</h2>
+          </div>
+          <p data-reveal>
+            A considered edit from the Home &amp; Garden Pro catalogue. Tap any piece to
+            ask about finishes and availability.
+          </p>
         </div>
 
-        <div class="product-rail" aria-label="Home & Garden Pro product catalogue">
-          <article class="product-line" data-reveal>
-            <img src="assets/indiana-brown.jpg" alt="Indiana Brown sculpture" />
-            <div>
-              <p>Indiana Brown</p>
-              <span>Garden sculpture</span>
-            </div>
+        <div class="collection-list">
+          <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Indiana%20Brown%20sculpture." data-reveal>
+            <span class="item-number">01</span>
+            <span class="item-thumb"><img src="assets/indiana-brown.jpg" alt="Indiana Brown garden sculpture" loading="lazy" /></span>
+            <span class="item-name">Indiana Brown<small>Garden sculpture</small></span>
             <strong>US$1,100</strong>
-          </article>
-          <article class="product-line" data-reveal>
-            <img src="assets/funduzi-granite.jpg" alt="Funduzi Granite pot" />
-            <div>
-              <p>Funduzi Granite</p>
-              <span>Tall concrete vessel</span>
-            </div>
+            <span class="item-arrow" aria-hidden="true">&#8599;</span>
+          </a>
+          <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Funduzi%20Granite%20pot." data-reveal>
+            <span class="item-number">02</span>
+            <span class="item-thumb"><img src="assets/funduzi-granite.jpg" alt="Funduzi Granite concrete pot" loading="lazy" /></span>
+            <span class="item-name">Funduzi Granite<small>Tall concrete vessel</small></span>
             <strong>US$400</strong>
-          </article>
-          <article class="product-line featured-line" data-reveal>
-            <img src="assets/water-feature-cream.jpg" alt="Cream water feature" />
-            <div>
-              <p>Water Feature</p>
-              <span>Still water focal point</span>
-            </div>
+            <span class="item-arrow" aria-hidden="true">&#8599;</span>
+          </a>
+          <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20water%20feature." data-reveal>
+            <span class="item-number">03</span>
+            <span class="item-thumb"><img src="assets/water-feature-cream.jpg" alt="Cream concrete water feature" loading="lazy" /></span>
+            <span class="item-name">Water Feature<small>Still water focal point</small></span>
             <strong>US$450</strong>
-          </article>
-          <article class="product-line" data-reveal>
-            <img src="assets/curo-trough.jpg" alt="Curo Trough" />
-            <div>
-              <p>Curo Trough</p>
-              <span>Linear garden trough</span>
-            </div>
+            <span class="item-arrow" aria-hidden="true">&#8599;</span>
+          </a>
+          <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Curo%20Trough." data-reveal>
+            <span class="item-number">04</span>
+            <span class="item-thumb"><img src="assets/curo-trough.jpg" alt="Curo concrete trough" loading="lazy" /></span>
+            <span class="item-name">Curo Trough<small>Linear garden trough</small></span>
             <strong>US$300</strong>
-          </article>
-          <article class="product-line" data-reveal>
-            <img src="assets/round-planters.jpg" alt="Round Planters" />
-            <div>
-              <p>Round Planters</p>
-              <span>Grouped sculptural set</span>
-            </div>
+            <span class="item-arrow" aria-hidden="true">&#8599;</span>
+          </a>
+          <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Round%20Planters." data-reveal>
+            <span class="item-number">05</span>
+            <span class="item-thumb"><img src="assets/round-planters.jpg" alt="Round sculptural planters" loading="lazy" /></span>
+            <span class="item-name">Round Planters<small>Sculptural planter set</small></span>
             <strong>US$1,200</strong>
-          </article>
-          <article class="product-line" data-reveal>
-            <img src="assets/protea.jpg" alt="Protea white planters" />
-            <div>
-              <p>Protea</p>
-              <span>Minimal white planters</span>
-            </div>
+            <span class="item-arrow" aria-hidden="true">&#8599;</span>
+          </a>
+          <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Protea%20planters." data-reveal>
+            <span class="item-number">06</span>
+            <span class="item-thumb"><img src="assets/protea.jpg" alt="Protea white concrete planters" loading="lazy" /></span>
+            <span class="item-name">Protea<small>Minimal white planters</small></span>
             <strong>US$350</strong>
-          </article>
-          <article class="product-line" data-reveal>
-            <img src="assets/kingsgate.jpg" alt="Kingsgate planter set" />
-            <div>
-              <p>Kingsgate</p>
-              <span>Statement entrance set</span>
-            </div>
-            <strong>US$1,200</strong>
-          </article>
+            <span class="item-arrow" aria-hidden="true">&#8599;</span>
+          </a>
         </div>
       </section>
 
-      <section class="story scene" aria-labelledby="story-title">
-        <div class="story-media" data-reveal>
-          <img src="assets/planter-collage.jpg" alt="Home & Garden Pro planter collection" />
+      <section class="placing section-shell" aria-labelledby="placing-title">
+        <div class="placing-visual" data-reveal>
+          <span class="shape shape-one"></span>
+          <span class="shape shape-two"></span>
+          <span class="shape shape-three"></span>
+          <p>Strong silhouettes.<br />Soft surroundings.</p>
         </div>
-        <div class="story-copy" data-reveal>
-          <p class="eyebrow">Why it works</p>
-          <h2 id="story-title">Concrete, greenery and water. Nothing overdone.</h2>
-          <p>
-            The collection keeps things practical and beautiful: solid finishes,
-            useful sizes and sculptural shapes that suit entrances, verandas,
-            courtyards and indoor corners.
+        <div class="placing-copy">
+          <div class="section-index" data-reveal>04 / Find the right place</div>
+          <h2 id="placing-title" data-reveal>Start with the space, then choose the piece.</h2>
+          <p data-reveal>
+            Frame an entrance. Settle a quiet courtyard. Bring weight to an empty
+            corner. The right form gives the garden something to gather around.
           </p>
-          <div class="process">
-            <span>01 Select the silhouette</span>
-            <span>02 Match the finish</span>
-            <span>03 Place the focal point</span>
-          </div>
+          <ol data-reveal>
+            <li><span>01</span>Choose the silhouette</li>
+            <li><span>02</span>Match the finish</li>
+            <li><span>03</span>Place the focal point</li>
+          </ol>
         </div>
       </section>
 
-      <section id="visit" class="visit scene" aria-labelledby="visit-title">
-        <div class="visit-panel" data-reveal>
-          <p class="eyebrow">Open now</p>
-          <h2 id="visit-title">Visit Home & Garden Pro at Boxpark, Helensvale.</h2>
-          <p>
-            18 Crowhill Rd, Boxpark, Helensvale, Harare. Open 24 hours for
-            customers looking for concrete garden pots, sculptures and water features.
-          </p>
-          <div class="contact-grid">
-            <a href="tel:+263772302335">
-              <span>Call</span>
-              +263 77 230 2335
-            </a>
-            <a href="https://wa.me/263772302335">
-              <span>WhatsApp</span>
-              Send catalogue request
-            </a>
-            <a href="https://maps.google.com/?q=18%20Crowhill%20Rd%20Boxpark%20Helensvale%20Harare">
-              <span>Map</span>
-              Open directions
-            </a>
-          </div>
+      <section id="visit" class="visit section-shell" aria-labelledby="visit-title">
+        <div class="visit-orbit" aria-hidden="true"><span></span><span></span></div>
+        <div class="visit-copy">
+          <p class="eyebrow light" data-reveal>Boxpark, Helensvale</p>
+          <h2 id="visit-title" data-reveal>Come find the piece that feels right.</h2>
+          <p data-reveal>18 Crowhill Road, Boxpark, Helensvale, Harare. Open 24 hours.</p>
+        </div>
+        <div class="visit-actions" data-reveal>
+          <a class="button button-light" href="https://wa.me/263772302335?text=Hello%20Home%20%26%20Garden%20Pro%2C%20may%20I%20see%20your%20current%20catalogue%3F">WhatsApp us</a>
+          <a class="round-link" href="https://maps.google.com/?q=18%20Crowhill%20Rd%20Boxpark%20Helensvale%20Harare" aria-label="Open Home & Garden Pro in Google Maps">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z" /><circle cx="12" cy="10" r="2" /></svg>
+          </a>
         </div>
       </section>
     </main>
+
+    <footer>
+      <a class="footer-brand" href="#top">Home &amp; Garden Pro</a>
+      <div>
+        <a href="tel:+263772302335">+263 77 230 2335</a>
+        <a href="https://wa.me/263772302335">WhatsApp</a>
+      </div>
+      <a class="credit" href="https://wa.me/263789937251">Website built &amp; developed by Jaeger Media</a>
+    </footer>
 
     <script src="app.js"></script>
   </body>

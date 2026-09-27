@@ -8,6 +8,7 @@ const categoryLabels = {
 };
 
 let catalogue = [];
+let siteSettings = { whatsappCatalogUrl: "https://wa.me/c/30404207759615" };
 
 const escapeHTML = (value = "") => String(value).replace(/[&<>'"]/g, (character) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
@@ -23,6 +24,10 @@ function normalizeProduct(item) {
     else category = "planters";
   }
   const slug = item.slug || item.id;
+  const sizes = Array.isArray(item.sizes) ? item.sizes.map((size) => ({
+    ...size,
+    price: Number.isFinite(Number(size.price)) && Number(size.price) > 0 ? Number(size.price) : null,
+  })).filter((size) => size.label) : [];
   return {
     ...item,
     slug,
@@ -31,13 +36,38 @@ function normalizeProduct(item) {
     images: Array.isArray(item.images) && item.images.length ? item.images : [item.image],
     summary: item.summary || "A Home & Garden Pro piece for considered outdoor spaces.",
     family: item.family || item.categoryLabel || "Garden form",
+    sizes,
+    priceFrom: Number.isFinite(Number(item.priceFrom)) && Number(item.priceFrom) > 0 ? Number(item.priceFrom) : null,
+    priceTo: Number.isFinite(Number(item.priceTo)) && Number(item.priceTo) > 0 ? Number(item.priceTo) : null,
+    showPrice: item.showPrice === true,
   };
+}
+
+const money = (value) => `$${Number(value).toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+
+function productRange(item) {
+  const sizePrices = item.sizes.map((size) => size.price).filter(Boolean);
+  const prices = sizePrices.length ? sizePrices : [item.priceFrom, item.priceTo].filter(Boolean);
+  return prices.length ? { min: Math.min(...prices), max: Math.max(...prices) } : null;
+}
+
+function priceLabel(item) {
+  const range = productRange(item);
+  if (!item.showPrice || !range) return "Ask for current price";
+  return range.min === range.max ? `From ${money(range.min)}` : `${money(range.min)} - ${money(range.max)}`;
+}
+
+function sizeOptions(item) {
+  if (!item.showPrice) return "";
+  const sizes = item.sizes.filter((size) => size.price);
+  if (!sizes.length) return "";
+  return `<div class="size-options" role="group" aria-label="Available sizes">${sizes.map((size, index) => `<button class="size-option${index === 0 ? " is-selected" : ""}" type="button" data-size-option data-size-label="${escapeHTML(size.label)}" data-size-price="${size.price}"><span>${escapeHTML(size.label)}</span>${size.dimensions ? `<small>${escapeHTML(size.dimensions)}</small>` : ""}<strong>${money(size.price)}</strong></button>`).join("")}</div>`;
 }
 
 function pieceCard(item, index = 0) {
   return `<article class="piece-card" data-product-card data-category="${escapeHTML(item.category)}" data-name="${escapeHTML(item.name.toLowerCase())}" data-reveal="${index % 2 ? "right" : "left"}" style="--delay:${(index % 4) * 70}ms">
     <a class="piece-image fit-contain" href="/products/${encodeURIComponent(item.slug)}/"><img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.alt || item.name)}" width="864" height="1080" loading="lazy" decoding="async" /></a>
-    <div class="piece-meta"><p>${escapeHTML(item.categoryLabel)}</p><h3><a href="/products/${encodeURIComponent(item.slug)}/">${escapeHTML(item.name)}</a></h3><a class="motion-link" href="/products/${encodeURIComponent(item.slug)}/">View piece <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
+    <div class="piece-meta"><p>${escapeHTML(item.categoryLabel)}</p><h3><a href="/products/${encodeURIComponent(item.slug)}/">${escapeHTML(item.name)}</a></h3><span class="piece-price">${escapeHTML(priceLabel(item))}</span><a class="motion-link" href="/products/${encodeURIComponent(item.slug)}/">View piece <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
   </article>`;
 }
 
@@ -48,7 +78,9 @@ async function loadCatalogue() {
       if (!response.ok || !response.headers.get("content-type")?.includes("application/json")) continue;
       const data = await response.json();
       if (Array.isArray(data.items)) {
-        catalogue = data.items.filter((item) => item.visible !== false).map(normalizeProduct);
+        catalogue = data.items.filter((item) => item.visible !== false && item.archived !== true).map(normalizeProduct);
+        if (data.settings?.whatsappCatalogUrl) siteSettings.whatsappCatalogUrl = data.settings.whatsappCatalogUrl;
+        document.querySelectorAll("[data-catalogue-link]").forEach((link) => link.href = siteSettings.whatsappCatalogUrl);
         return catalogue;
       }
     } catch {
@@ -63,10 +95,32 @@ function initProgressAndNavigation() {
   const header = document.querySelector("[data-site-header]");
   const marker = document.querySelector("[data-section-marker]");
   const sections = [...document.querySelectorAll("[data-section-name]")];
+  const nav = document.querySelector("[data-desktop-nav]");
+  const pill = nav?.querySelector("[data-nav-pill]");
+  const navLinks = [...document.querySelectorAll("[data-nav-key]")];
+  const navSections = [...document.querySelectorAll("[data-nav-section]")];
   let lastY = window.scrollY;
   let target = 0;
   let current = 0;
   let frame = 0;
+  let activeKey = document.querySelector("[data-desktop-nav] [aria-current='page']")?.dataset.navKey || "home";
+
+  const setActiveNav = (key) => {
+    const targetLink = nav?.querySelector(`[data-nav-key="${key}"]`);
+    if (!targetLink) return;
+    activeKey = key;
+    navLinks.forEach((link) => {
+      const active = link.dataset.navKey === key;
+      link.classList.toggle("is-active", active);
+      if (active) link.setAttribute("aria-current", "location");
+      else if (link.getAttribute("aria-current") === "location") link.removeAttribute("aria-current");
+    });
+    if (pill) {
+      pill.style.width = `${targetLink.offsetWidth}px`;
+      pill.style.transform = `translateX(${targetLink.offsetLeft}px)`;
+      pill.classList.add("is-ready");
+    }
+  };
 
   const animateProgress = () => {
     current += (target - current) * 0.18;
@@ -85,6 +139,16 @@ function initProgressAndNavigation() {
     marker.textContent = active.dataset.sectionName;
   };
 
+  const updateNavSection = () => {
+    if (!navSections.length) return;
+    const probe = window.innerHeight * .42;
+    let active = navSections[0];
+    navSections.forEach((section) => {
+      if (section.getBoundingClientRect().top <= probe) active = section;
+    });
+    setActiveNav(active.dataset.navSection);
+  };
+
   const update = () => {
     const y = Math.max(0, window.scrollY);
     const distance = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
@@ -99,11 +163,44 @@ function initProgressAndNavigation() {
     }
     lastY = y;
     updateSection();
+    updateNavSection();
   };
 
   window.addEventListener("scroll", update, { passive: true });
-  window.addEventListener("resize", update, { passive: true });
+  window.addEventListener("resize", () => { update(); setActiveNav(activeKey); }, { passive: true });
+  navLinks.forEach((link) => link.addEventListener("click", () => setActiveNav(link.dataset.navKey)));
+  if (navSections.length && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveNav(visible.target.dataset.navSection);
+    }, { rootMargin: "-28% 0px -52% 0px", threshold: [0, .15, .35, .55] });
+    navSections.forEach((section) => observer.observe(section));
+  }
+  requestAnimationFrame(() => setActiveNav(activeKey));
   update();
+}
+
+function initLogoShortcut() {
+  document.querySelectorAll("[data-admin-shortcut]").forEach((logo) => {
+    let lastTap = 0;
+    let navigateTimer = 0;
+    logo.addEventListener("click", (event) => {
+      if (event.detail === 0) return;
+      event.preventDefault();
+      const now = Date.now();
+      if (now - lastTap < 340) {
+        window.clearTimeout(navigateTimer);
+        lastTap = 0;
+        window.location.assign("/admin/");
+        return;
+      }
+      lastTap = now;
+      navigateTimer = window.setTimeout(() => {
+        lastTap = 0;
+        window.location.assign(logo.href);
+      }, 340);
+    });
+  });
 }
 
 function initMenu() {
@@ -347,7 +444,10 @@ function initEnquiryModal() {
     opener = button;
     const name = button.dataset.enquiryName;
     const thumbnail = button.dataset.enquiryImage;
-    const message = `Hello Home & Garden Pro, I'm interested in the ${name}. Could you tell me about current finishes and availability?`;
+    const size = button.dataset.enquirySize;
+    const message = size
+      ? `Hello Home & Garden Pro, I'm interested in ${name}, particularly the ${size} option. Could you please confirm availability and current pricing?`
+      : `Hello Home & Garden Pro, I'm interested in ${name}. Could you please confirm availability and current pricing?`;
     content.innerHTML = `<div class="enquiry-content"><div class="enquiry-piece"><img src="${escapeHTML(thumbnail)}" alt="${escapeHTML(name)}" /><div><p class="eyebrow">Piece enquiry</p><h2 id="enquiryTitle">${escapeHTML(name)}</h2></div></div><p class="message-preview">${escapeHTML(message)}</p><a class="button dark" href="https://wa.me/${phone}?text=${encodeURIComponent(message)}" target="_blank" rel="noopener">Continue to WhatsApp <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>`;
     modal.hidden = false;
     document.body.classList.add("modal-open");
@@ -355,6 +455,19 @@ function initEnquiryModal() {
   });
   modal.querySelectorAll("[data-enquiry-close]").forEach((element) => element.addEventListener("click", close));
   window.addEventListener("keydown", (event) => { if (event.key === "Escape" && !modal.hidden) close(); });
+}
+
+function initSizeSelection() {
+  document.addEventListener("click", (event) => {
+    const option = event.target.closest("[data-size-option]");
+    if (!option) return;
+    const panel = option.closest(".product-info");
+    panel?.querySelectorAll("[data-size-option]").forEach((item) => item.classList.toggle("is-selected", item === option));
+    const currentPrice = panel?.querySelector("[data-current-price]");
+    if (currentPrice) currentPrice.textContent = money(option.dataset.sizePrice);
+    const enquiry = panel?.querySelector("[data-enquiry-name]");
+    if (enquiry) enquiry.dataset.enquirySize = option.dataset.sizeLabel;
+  });
 }
 
 function hydrateDynamicProduct() {
@@ -369,11 +482,14 @@ function hydrateDynamicProduct() {
     return;
   }
   container.className = "product-detail";
-  container.innerHTML = `<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/collection/">Collection</a><span>/</span><span>${escapeHTML(item.name)}</span></nav><div class="product-gallery"><div class="product-primary fit-contain"><img src="${escapeHTML(item.images[0])}" alt="${escapeHTML(item.alt || item.name)}" width="900" height="1100" /></div><div class="product-support">${item.images.slice(1,3).map((source, index) => `<div class="${index === 0 ? "fit-contain" : ""}"><img src="${escapeHTML(source)}" alt="${escapeHTML(`${item.name}, view ${index + 2}`)}" width="720" height="900" /></div>`).join("")}</div></div><aside class="product-info is-visible"><p class="eyebrow">${escapeHTML(item.categoryLabel)}</p><h1>${escapeHTML(item.name)}</h1><p class="product-family">${escapeHTML(item.family)}</p><p>${escapeHTML(item.summary)}</p><div class="product-actions"><button class="button dark" type="button" data-enquiry-name="${escapeHTML(item.name)}" data-enquiry-image="${escapeHTML(item.image)}">Ask about this piece</button><a class="motion-link" href="/visit/">See it at Boxpark →</a></div></aside>`;
+  const pricedSizes = item.showPrice ? item.sizes.filter((size) => size.price) : [];
+  const initialPrice = pricedSizes.length ? money(pricedSizes[0].price) : priceLabel(item);
+  container.innerHTML = `<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/collection/">Collection</a><span>/</span><span>${escapeHTML(item.name)}</span></nav><div class="product-gallery"><div class="product-primary fit-contain"><img src="${escapeHTML(item.images[0])}" alt="${escapeHTML(item.alt || item.name)}" width="900" height="1100" /></div><div class="product-support">${item.images.slice(1,3).map((source, index) => `<div class="${index === 0 ? "fit-contain" : ""}"><img src="${escapeHTML(source)}" alt="${escapeHTML(`${item.name}, view ${index + 2}`)}" width="720" height="900" /></div>`).join("")}</div></div><aside class="product-info is-visible"><p class="eyebrow">${escapeHTML(item.categoryLabel)}</p><h1>${escapeHTML(item.name)}</h1><p class="product-family">${escapeHTML(item.family)}</p><p>${escapeHTML(item.summary)}</p><div class="price-panel"><p>Price range</p><strong data-current-price>${escapeHTML(initialPrice)}</strong>${sizeOptions(item)}</div><div class="product-actions"><a class="motion-link" href="${escapeHTML(siteSettings.whatsappCatalogUrl)}" data-catalogue-link target="_blank" rel="noopener noreferrer">View WhatsApp catalogue →</a><button class="button dark" type="button" data-enquiry-name="${escapeHTML(item.name)}" data-enquiry-image="${escapeHTML(item.image)}"${pricedSizes[0] ? ` data-enquiry-size="${escapeHTML(pricedSizes[0].label)}"` : ""}>Ask about this piece</button><a class="motion-link" href="/visit/">See it at Boxpark →</a></div></aside>`;
   document.title = `${item.name} | Home & Garden Pro`;
 }
 
 initProgressAndNavigation();
+initLogoShortcut();
 initMenu();
 initReveal();
 initHero();
@@ -383,4 +499,5 @@ initSpaceSelector();
 initParallax();
 initLightbox();
 initEnquiryModal();
+initSizeSelection();
 hydrateCatalogues();

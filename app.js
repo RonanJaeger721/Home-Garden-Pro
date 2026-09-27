@@ -1,243 +1,325 @@
-const root = document.documentElement;
-const body = document.body;
-const loader = document.querySelector(".page-loader");
-const header = document.querySelector(".site-header");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const phone = "263772302335";
+const categoryLabels = {
+  planters: "Planters",
+  sculptural: "Sculptural",
+  "water-features": "Water features",
+  troughs: "Troughs",
+};
 
-body.classList.add("loading");
+let catalogue = [];
 
-function finishLoading() {
-  window.setTimeout(() => {
-    loader?.classList.add("is-hidden");
-    body.classList.remove("loading");
-  }, reducedMotion.matches ? 0 : 650);
-}
+const escapeHTML = (value = "") => String(value).replace(/[&<>'"]/g, (character) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
+})[character]);
 
-if (document.readyState === "complete") {
-  finishLoading();
-} else {
-  window.addEventListener("load", finishLoading, { once: true });
-}
-
-const revealItems = [...document.querySelectorAll("[data-reveal]")];
-
-if ("IntersectionObserver" in window && !reducedMotion.matches) {
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const siblings = [...entry.target.parentElement.querySelectorAll("[data-reveal]")];
-        const order = Math.max(0, siblings.indexOf(entry.target));
-        entry.target.style.transitionDelay = Math.min(order, 4) * 70 + "ms";
-        entry.target.classList.add("in-view");
-        revealObserver.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.14, rootMargin: "0px 0px -7% 0px" },
-  );
-
-  revealItems.forEach((item) => revealObserver.observe(item));
-} else {
-  revealItems.forEach((item) => item.classList.add("in-view"));
-}
-
-let ticking = false;
-
-function updateOnScroll() {
-  const scrollY = window.scrollY;
-  header?.classList.toggle("is-scrolled", scrollY > 32);
-
-  if (!reducedMotion.matches && window.innerWidth > 640) {
-    const shift = Math.min(72, scrollY * 0.09);
-    root.style.setProperty("--hero-shift", shift + "px");
+function normalizeProduct(item) {
+  const legacy = (item.category || "").toLowerCase();
+  let category = item.category;
+  if (!categoryLabels[category]) {
+    if (legacy.includes("trough")) category = "troughs";
+    else if (legacy.includes("water")) category = "water-features";
+    else if (legacy.includes("sculpt") || legacy.includes("ornament")) category = "sculptural";
+    else category = "planters";
   }
-
-  ticking = false;
+  const slug = item.slug || item.id;
+  return {
+    ...item,
+    slug,
+    category,
+    categoryLabel: item.categoryLabel || categoryLabels[category] || "Garden piece",
+    images: Array.isArray(item.images) && item.images.length ? item.images : [item.image],
+    summary: item.summary || "A Home & Garden Pro piece for considered outdoor spaces.",
+    family: item.family || item.categoryLabel || "Garden form",
+  };
 }
-
-window.addEventListener(
-  "scroll",
-  () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(updateOnScroll);
-  },
-  { passive: true },
-);
-
-updateOnScroll();
-
-const catalogueList = document.querySelector("#catalogueList");
 
 function estimateLabel(item) {
   if (!item.showEstimate) return "";
-  const minimum = Number.isFinite(Number(item.estimateMin)) ? Number(item.estimateMin) : null;
-  const maximum = Number.isFinite(Number(item.estimateMax)) ? Number(item.estimateMax) : null;
-  const money = (value) => new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
-
-  if (minimum !== null && maximum !== null) return `Est. US$${money(minimum)}–${money(maximum)}`;
-  if (minimum !== null) return `Est. from US$${money(minimum)}`;
-  if (maximum !== null) return `Est. up to US$${money(maximum)}`;
+  const format = (value) => new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
+  if (item.estimateMin != null && item.estimateMax != null) return `Est. US$${format(item.estimateMin)}–${format(item.estimateMax)}`;
+  if (item.estimateMin != null) return `Est. from US$${format(item.estimateMin)}`;
+  if (item.estimateMax != null) return `Est. up to US$${format(item.estimateMax)}`;
   return "";
 }
 
-function createCatalogueItem(item, index) {
-  const link = document.createElement("a");
-  const enquiry = `Hello, I'm interested in the ${item.name}. Could you tell me about current availability?`;
-  link.className = "collection-item";
-  link.href = `https://wa.me/263772302335?text=${encodeURIComponent(enquiry)}`;
-
-  const number = document.createElement("span");
-  number.className = "item-number";
-  number.textContent = String(index + 1).padStart(2, "0");
-
-  const thumb = document.createElement("span");
-  thumb.className = "item-thumb";
-  const image = document.createElement("img");
-  image.src = item.image || "assets/client-round-planters.webp";
-  image.alt = item.alt || item.name;
-  image.width = 1080;
-  image.height = 1080;
-  image.loading = "lazy";
-  image.decoding = "async";
-  image.addEventListener("error", () => {
-    image.src = "assets/client-round-planters.webp";
-  }, { once: true });
-  thumb.append(image);
-
-  const name = document.createElement("span");
-  name.className = "item-name";
-  name.append(document.createTextNode(item.name));
-  const category = document.createElement("small");
-  category.textContent = item.category || "Garden piece";
-  name.append(category);
-
-  link.append(number, thumb, name);
-
+function productCard(item) {
   const estimate = estimateLabel(item);
-  if (estimate) {
-    const price = document.createElement("span");
-    price.className = "item-estimate";
-    price.textContent = estimate;
-    link.append(price);
-  }
-
-  const arrow = document.createElement("span");
-  arrow.className = "item-arrow";
-  arrow.setAttribute("aria-hidden", "true");
-  arrow.textContent = "↗";
-  link.append(arrow);
-  return link;
+  return `<article class="product-card" data-product-card data-category="${escapeHTML(item.category)}" data-name="${escapeHTML(item.name.toLowerCase())}">
+    <a class="product-image" href="/products/${encodeURIComponent(item.slug)}/"><img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.alt || item.name)}" width="900" height="1100" loading="lazy" decoding="async" /></a>
+    <div class="product-meta"><div><p>${escapeHTML(item.categoryLabel)}</p><h2><a href="/products/${encodeURIComponent(item.slug)}/">${escapeHTML(item.name)}</a></h2></div>${estimate ? `<span class="product-estimate">${escapeHTML(estimate)}</span>` : ""}<button class="quick-button" type="button" data-quick-slug="${escapeHTML(item.slug)}">Quick view</button></div>
+  </article>`;
 }
 
 async function loadCatalogue() {
-  if (!catalogueList) return;
-
-  try {
-    const response = await fetch("/api/catalog", { headers: { Accept: "application/json" } });
-    if (!response.ok || !response.headers.get("content-type")?.includes("application/json")) return;
-    const catalog = await response.json();
-    const visibleItems = Array.isArray(catalog.items) ? catalog.items.filter((item) => item.visible !== false) : [];
-    if (!visibleItems.length) return;
-    catalogueList.replaceChildren(...visibleItems.map(createCatalogueItem));
-  } catch {
-    // Keep the source catalogue in place if the live endpoint is unavailable.
-  }
-}
-
-loadCatalogue();
-
-const field = document.querySelector("#rippleField");
-const canvas = document.querySelector("#rippleCanvas");
-const context = canvas?.getContext("2d");
-
-if (field && canvas && context) {
-  let width = 0;
-  let height = 0;
-  let ripples = [];
-  let lastRipple = 0;
-  let frameId = 0;
-
-  function resizeCanvas() {
-    const bounds = field.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    width = bounds.width;
-    height = bounds.height;
-    canvas.width = Math.round(width * dpr);
-    canvas.height = Math.round(height * dpr);
-    context.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function addRipple(x, y, strength = 1) {
-    ripples.push({
-      x,
-      y,
-      radius: 8,
-      alpha: 0.34 * strength,
-      speed: 1.8 + strength * 0.8,
-    });
-
-    if (ripples.length > 18) ripples.shift();
-  }
-
-  function drawWater(time = 0) {
-    context.clearRect(0, 0, width, height);
-
-    const wash = context.createLinearGradient(0, 0, width, height);
-    wash.addColorStop(0, "rgba(31, 81, 59, 0.45)");
-    wash.addColorStop(0.55, "rgba(9, 47, 38, 0.08)");
-    wash.addColorStop(1, "rgba(87, 126, 104, 0.22)");
-    context.fillStyle = wash;
-    context.fillRect(0, 0, width, height);
-
-    context.lineWidth = 0.8;
-    for (let row = 42; row < height; row += 54) {
-      context.beginPath();
-      for (let x = -20; x <= width + 20; x += 20) {
-        const wave = Math.sin(x * 0.018 + row * 0.03 + time * 0.00035) * 4;
-        if (x === -20) context.moveTo(x, row + wave);
-        else context.lineTo(x, row + wave);
+  const sources = ["/api/catalog", "/data/catalog.json"];
+  for (const source of sources) {
+    try {
+      const response = await fetch(source, { headers: { Accept: "application/json" }, cache: "no-store" });
+      if (!response.ok || !response.headers.get("content-type")?.includes("application/json")) continue;
+      const data = await response.json();
+      if (Array.isArray(data.items)) {
+        catalogue = data.items.filter((item) => item.visible !== false).map(normalizeProduct);
+        return catalogue;
       }
-      context.strokeStyle = "rgba(205, 229, 215, 0.075)";
-      context.stroke();
+    } catch {
+      // Fall through to the bundled catalogue.
     }
+  }
+  return [];
+}
 
-    ripples = ripples.filter((ripple) => ripple.alpha > 0.008);
-    ripples.forEach((ripple) => {
-      context.beginPath();
-      context.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
-      context.strokeStyle = "rgba(214, 235, 222, " + ripple.alpha + ")";
-      context.lineWidth = 1.2;
-      context.stroke();
-      ripple.radius += ripple.speed;
-      ripple.alpha *= 0.97;
+function initProgress() {
+  const bar = document.querySelector(".scroll-progress span");
+  const header = document.querySelector("[data-site-header]");
+  if (!bar) return;
+  let scheduled = false;
+  const update = () => {
+    const distance = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.transform = `scaleX(${distance > 0 ? Math.min(1, window.scrollY / distance) : 0})`;
+    header?.classList.toggle("is-scrolled", window.scrollY > 24);
+    scheduled = false;
+  };
+  window.addEventListener("scroll", () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+  update();
+}
+
+function initMenu() {
+  const toggle = document.querySelector("[data-menu-toggle]");
+  const menu = document.querySelector("[data-mobile-menu]");
+  const close = document.querySelector("[data-menu-close]");
+  if (!toggle || !menu) return;
+  const setOpen = (open) => {
+    menu.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    document.body.classList.toggle("menu-open", open);
+    if (open) menu.querySelector("a")?.focus();
+    else toggle.focus();
+  };
+  toggle.addEventListener("click", () => setOpen(menu.hidden));
+  close?.addEventListener("click", () => setOpen(false));
+  menu.addEventListener("click", (event) => { if (event.target.closest("a")) setOpen(false); });
+  window.addEventListener("keydown", (event) => { if (event.key === "Escape" && !menu.hidden) setOpen(false); });
+}
+
+function initReveal() {
+  const items = [...document.querySelectorAll("[data-reveal]")];
+  if (reducedMotion.matches || !("IntersectionObserver" in window)) {
+    items.forEach((item) => item.classList.add("is-visible"));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
     });
+  }, { threshold: .12, rootMargin: "0px 0px -6% 0px" });
+  items.forEach((item) => observer.observe(item));
+}
 
-    if (!reducedMotion.matches) frameId = requestAnimationFrame(drawWater);
-  }
+function initHero() {
+  const hero = document.querySelector("[data-hero]");
+  if (!hero) return;
+  const slides = [...hero.querySelectorAll(".hero-slide")];
+  const current = hero.querySelector("[data-hero-current]");
+  let index = 0;
+  let timer;
+  let paused = false;
+  const show = (next) => {
+    index = (next + slides.length) % slides.length;
+    slides.forEach((slide, slideIndex) => slide.classList.toggle("is-active", slideIndex === index));
+    if (current) current.textContent = String(index + 1).padStart(2, "0");
+  };
+  const play = () => {
+    window.clearInterval(timer);
+    if (!paused && !reducedMotion.matches) timer = window.setInterval(() => show(index + 1), 5000);
+  };
+  const manual = (direction) => { paused = true; show(index + direction); window.clearInterval(timer); };
+  hero.querySelector("[data-hero-prev]")?.addEventListener("click", () => manual(-1));
+  hero.querySelector("[data-hero-next]")?.addEventListener("click", () => manual(1));
+  hero.addEventListener("pointerenter", () => window.clearInterval(timer));
+  hero.addEventListener("pointerleave", play);
+  document.addEventListener("visibilitychange", () => document.hidden ? window.clearInterval(timer) : play());
+  play();
+}
 
-  function rippleFromEvent(event, strength) {
-    const bounds = field.getBoundingClientRect();
-    addRipple(event.clientX - bounds.left, event.clientY - bounds.top, strength);
-  }
-
-  field.addEventListener("pointermove", (event) => {
-    if (reducedMotion.matches) return;
-    const now = performance.now();
-    if (now - lastRipple < 90) return;
-    rippleFromEvent(event, 0.72);
-    lastRipple = now;
+function initDragRail() {
+  const rail = document.querySelector("[data-drag-rail]");
+  const track = rail?.querySelector(".run-track");
+  if (!rail || !track) return;
+  let down = false;
+  let start = 0;
+  let offset = 0;
+  let base = 0;
+  const clamp = (value) => Math.max(-(track.scrollWidth - rail.clientWidth), Math.min(0, value));
+  rail.addEventListener("pointerdown", (event) => {
+    down = true;
+    start = event.clientX;
+    base = offset;
+    rail.classList.add("is-dragging");
+    track.style.animation = "none";
+    rail.setPointerCapture(event.pointerId);
   });
-
-  field.addEventListener("pointerdown", (event) => rippleFromEvent(event, 1.4));
-  window.addEventListener("resize", resizeCanvas);
-
-  resizeCanvas();
-  addRipple(width * 0.5, height * 0.5, 1.6);
-  drawWater();
-
-  reducedMotion.addEventListener("change", () => {
-    cancelAnimationFrame(frameId);
-    drawWater();
+  rail.addEventListener("pointermove", (event) => {
+    if (!down) return;
+    offset = clamp(base + event.clientX - start);
+    track.style.transform = `translateX(${offset}px)`;
+  });
+  const release = () => { down = false; rail.classList.remove("is-dragging"); };
+  rail.addEventListener("pointerup", release);
+  rail.addEventListener("pointercancel", release);
+  rail.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    track.style.animation = "none";
+    offset = clamp(offset + (event.key === "ArrowLeft" ? 220 : -220));
+    track.style.transform = `translateX(${offset}px)`;
   });
 }
+
+async function hydrateCatalogues() {
+  await loadCatalogue();
+  if (!catalogue.length) return;
+  document.querySelectorAll("[data-catalog-grid]").forEach((grid) => {
+    let items = catalogue;
+    const category = grid.dataset.category;
+    if (category) items = items.filter((item) => item.category === category);
+    if (grid.dataset.featured === "true") items = items.filter((item) => item.featured);
+    if (grid.dataset.limit) items = items.slice(0, Number(grid.dataset.limit));
+    grid.innerHTML = items.map(productCard).join("");
+  });
+  initCatalogueFilters();
+  initQuickView();
+  hydrateDynamicProduct();
+}
+
+function initCatalogueFilters() {
+  document.querySelectorAll("[data-catalogue]").forEach((section) => {
+    const search = section.querySelector("[data-catalog-search]");
+    const buttons = [...section.querySelectorAll("[data-filter]")];
+    const cards = [...section.querySelectorAll("[data-product-card]")];
+    const count = section.querySelector("[data-result-count]");
+    const empty = section.querySelector("[data-empty-state]");
+    let active = buttons.find((button) => button.getAttribute("aria-pressed") === "true")?.dataset.filter || section.dataset.category || "all";
+    const apply = () => {
+      const term = search?.value.trim().toLowerCase() || "";
+      let visible = 0;
+      cards.forEach((card) => {
+        const matchFilter = active === "all" || card.dataset.category === active;
+        const matchSearch = !term || card.dataset.name.includes(term);
+        const show = matchFilter && matchSearch;
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+      if (count) count.textContent = visible;
+      if (empty) empty.hidden = visible !== 0;
+    };
+    buttons.forEach((button) => button.addEventListener("click", () => {
+      active = button.dataset.filter;
+      buttons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+      apply();
+    }));
+    search?.addEventListener("input", apply);
+    apply();
+  });
+}
+
+function initQuickView() {
+  const modal = document.querySelector("[data-quick-view]");
+  const content = modal?.querySelector("[data-quick-content]");
+  if (!modal || !content || modal.dataset.ready) return;
+  modal.dataset.ready = "true";
+  let opener;
+  const close = () => {
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+    opener?.focus();
+  };
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-quick-slug]");
+    if (!button) return;
+    const item = catalogue.find((product) => product.slug === button.dataset.quickSlug);
+    if (!item) return;
+    opener = button;
+    const message = encodeURIComponent(`Hello Home & Garden Pro, I'm interested in the ${item.name}. Could you tell me about current finishes and availability?`);
+    content.innerHTML = `<div class="quick-layout"><img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.alt || item.name)}" /><div><p class="eyebrow">${escapeHTML(item.categoryLabel)}</p><h2 id="quickViewTitle">${escapeHTML(item.name)}</h2><p>${escapeHTML(item.summary)}</p>${estimateLabel(item) ? `<p>${escapeHTML(estimateLabel(item))}</p>` : ""}<a class="button dark" href="https://wa.me/${phone}?text=${message}" target="_blank" rel="noopener">Ask about this piece</a><a class="text-link" href="/products/${encodeURIComponent(item.slug)}/">View full details →</a></div></div>`;
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    modal.querySelector(".modal-close")?.focus();
+  });
+  modal.querySelectorAll("[data-quick-close]").forEach((element) => element.addEventListener("click", close));
+  window.addEventListener("keydown", (event) => { if (event.key === "Escape" && !modal.hidden) close(); });
+}
+
+function initLightbox() {
+  const modal = document.querySelector("[data-lightbox]");
+  const buttons = [...document.querySelectorAll("[data-lightbox-src]")];
+  if (!modal || !buttons.length) return;
+  const image = modal.querySelector("[data-lightbox-image]");
+  const caption = modal.querySelector("[data-lightbox-caption]");
+  const count = modal.querySelector("[data-lightbox-count]");
+  let index = 0;
+  let opener;
+  let touchStart = 0;
+  const show = (next) => {
+    index = (next + buttons.length) % buttons.length;
+    image.src = buttons[index].dataset.lightboxSrc;
+    image.alt = buttons[index].dataset.lightboxAlt;
+    caption.textContent = buttons[index].dataset.lightboxAlt;
+    count.textContent = `${String(index + 1).padStart(2, "0")} / ${String(buttons.length).padStart(2, "0")}`;
+  };
+  const open = (button) => {
+    opener = button;
+    show(buttons.indexOf(button));
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    modal.querySelector("[data-lightbox-close]").focus();
+  };
+  const close = () => { modal.hidden = true; document.body.classList.remove("modal-open"); opener?.focus(); };
+  buttons.forEach((button) => button.addEventListener("click", () => open(button)));
+  modal.querySelector("[data-lightbox-close]").addEventListener("click", close);
+  modal.querySelector("[data-lightbox-prev]").addEventListener("click", () => show(index - 1));
+  modal.querySelector("[data-lightbox-next]").addEventListener("click", () => show(index + 1));
+  modal.addEventListener("touchstart", (event) => { touchStart = event.touches[0].clientX; }, { passive: true });
+  modal.addEventListener("touchend", (event) => {
+    const distance = event.changedTouches[0].clientX - touchStart;
+    if (Math.abs(distance) > 55) show(index + (distance < 0 ? 1 : -1));
+  }, { passive: true });
+  window.addEventListener("keydown", (event) => {
+    if (modal.hidden) return;
+    if (event.key === "Escape") close();
+    if (event.key === "ArrowLeft") show(index - 1);
+    if (event.key === "ArrowRight") show(index + 1);
+  });
+}
+
+function hydrateDynamicProduct() {
+  const container = document.querySelector("[data-dynamic-product]");
+  if (!container) return;
+  const querySlug = new URLSearchParams(window.location.search).get("slug");
+  const pathSlug = window.location.pathname.split("/").filter(Boolean).at(-1);
+  const slug = querySlug || pathSlug;
+  const item = catalogue.find((product) => product.slug === slug);
+  if (!item) {
+    container.innerHTML = '<p class="eyebrow">Piece not found</p><h1>That form is no longer in the catalogue.</h1><a class="button dark" href="/collection/">Browse the collection</a>';
+    return;
+  }
+  const message = encodeURIComponent(`Hello Home & Garden Pro, I'm interested in the ${item.name}. Could you tell me about current finishes and availability?`);
+  container.className = "product-detail";
+  container.innerHTML = `<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/collection/">Collection</a><span>/</span><span>${escapeHTML(item.name)}</span></nav><div class="product-gallery">${item.images.map((source, index) => `<img src="${escapeHTML(source)}" alt="${escapeHTML(index ? `${item.name}, view ${index + 1}` : item.alt || item.name)}" width="900" height="1100" />`).join("")}</div><aside class="product-info"><p class="eyebrow">${escapeHTML(item.categoryLabel)}</p><h1>${escapeHTML(item.name)}</h1><p class="product-family">${escapeHTML(item.family)}</p><p>${escapeHTML(item.summary)}</p>${estimateLabel(item) ? `<p>${escapeHTML(estimateLabel(item))}</p>` : ""}<div class="product-actions"><a class="button dark" href="https://wa.me/${phone}?text=${message}" target="_blank" rel="noopener">Ask about this piece</a><a class="button line" href="/visit/">See it at Boxpark</a></div></aside>`;
+  document.title = `${item.name} | Home & Garden Pro`;
+}
+
+initProgress();
+initMenu();
+initReveal();
+initHero();
+initDragRail();
+initLightbox();
+hydrateCatalogues();

@@ -41,7 +41,11 @@ function createItem(overrides = {}) {
   return {
     id: `item-${Date.now()}`,
     name: "New catalogue item",
-    category: "Planter",
+    slug: `item-${Date.now()}`,
+    category: "planters",
+    categoryLabel: "Planter",
+    family: "Garden form",
+    summary: "",
     image: "/assets/client-round-planters.webp",
     alt: "Home & Garden Pro catalogue item",
     visible: true,
@@ -61,11 +65,21 @@ function collectItems() {
     };
     const name = card.querySelector(".item-name").value.trim();
 
+    const existing = items.find((item) => item.id === card.dataset.id) || {};
+    const image = card.querySelector(".image-url").value;
     return {
+      ...existing,
       id: card.dataset.id || `${slugify(name)}-${index + 1}`,
+      slug: existing.slug || slugify(name),
       name,
       category: card.querySelector(".item-category").value.trim(),
-      image: card.querySelector(".image-url").value,
+      categoryLabel: card.querySelector(".category-label").value.trim(),
+      family: card.querySelector(".item-family").value.trim(),
+      summary: card.querySelector(".item-summary").value.trim(),
+      image,
+      images: Array.isArray(existing.images) && existing.images.length
+        ? [image, ...existing.images.filter((source) => source !== image)]
+        : [image],
       alt: card.querySelector(".image-alt").value || name,
       visible: card.querySelector(".item-visible").checked,
       featured: card.querySelector(".item-featured").checked,
@@ -138,6 +152,9 @@ function renderItem(item) {
   card.querySelector(".image-alt").value = item.alt || item.name;
   card.querySelector(".item-name").value = item.name;
   card.querySelector(".item-category").value = item.category;
+  card.querySelector(".category-label").value = item.categoryLabel || "";
+  card.querySelector(".item-family").value = item.family || "";
+  card.querySelector(".item-summary").value = item.summary || "";
   card.querySelector(".estimate-min").value = item.estimateMin ?? "";
   card.querySelector(".estimate-max").value = item.estimateMax ?? "";
   card.querySelector(".item-visible").checked = item.visible !== false;

@@ -1,0 +1,10 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "outputDirectory": "dist",
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/products/(?<slug>[^/]+)/?", "dest": "/product?slug=$slug" },
+    { "src": "/(.*)", "dest": "/404" }
+  ]
+}

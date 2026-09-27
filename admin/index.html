@@ -105,11 +105,16 @@
           <input class="image-alt" type="hidden" />
           <p class="upload-status" role="status"></p>
         </div>
-        <div class="item-fields">
-          <div class="field-grid">
-            <label>Item name<input class="item-name" type="text" maxlength="80" required /></label>
-            <label>Category<input class="item-category" type="text" maxlength="80" list="categories" /></label>
-          </div>
+          <div class="item-fields">
+            <div class="field-grid">
+              <label>Item name<input class="item-name" type="text" maxlength="80" required /></label>
+              <label>Collection<input class="item-category" type="text" maxlength="80" list="categories" /></label>
+            </div>
+            <div class="field-grid">
+              <label>Display label<input class="category-label" type="text" maxlength="80" placeholder="e.g. Tall planter" /></label>
+              <label>Form / family<input class="item-family" type="text" maxlength="100" placeholder="e.g. Tapered vessel" /></label>
+            </div>
+            <label>Short description<textarea class="item-summary" maxlength="320" rows="3" placeholder="A concise, factual description for the catalogue and product page."></textarea></label>
           <div class="estimate-fields">
             <label>Estimate from (US$)<input class="estimate-min" type="number" min="0" step="1" inputmode="numeric" /></label>
             <label>Estimate to (US$)<input class="estimate-max" type="number" min="0" step="1" inputmode="numeric" /></label>
@@ -127,11 +132,10 @@
     </template>
 
     <datalist id="categories">
-      <option value="Planter"></option>
-      <option value="Garden sculpture"></option>
-      <option value="Water feature"></option>
-      <option value="Garden furniture"></option>
-      <option value="Package"></option>
+      <option value="planters"></option>
+      <option value="sculptural"></option>
+      <option value="water-features"></option>
+      <option value="troughs"></option>
     </datalist>
 
     <script src="app.js" type="module"></script>

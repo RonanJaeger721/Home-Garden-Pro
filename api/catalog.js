@@ -26,9 +26,19 @@ function normalizeItem(item, index) {
 
   return {
     id,
+    slug: (normalizeText(item?.slug, 96) || id)
+      .toLowerCase()
+      .replace(/[^a-z0-9-]+/g, "-")
+      .replace(/^-+|-+$/g, "") || id,
     name,
-    category: normalizeText(item?.category, 80) || "Garden piece",
+    category: normalizeText(item?.category, 80) || "planters",
+    categoryLabel: normalizeText(item?.categoryLabel, 80),
+    family: normalizeText(item?.family, 100),
+    summary: normalizeText(item?.summary, 320),
     image: normalizeText(item?.image, 500),
+    images: Array.isArray(item?.images)
+      ? item.images.map((image) => normalizeText(image, 500)).filter(Boolean).slice(0, 8)
+      : [normalizeText(item?.image, 500)].filter(Boolean),
     alt: normalizeText(item?.alt, 140) || name,
     visible: item?.visible !== false,
     featured: item?.featured === true,
@@ -47,7 +57,15 @@ async function readCatalog() {
 
   const result = await fetch(current.url, { cache: "no-store" });
   if (!result.ok) throw new Error("Unable to read catalogue");
-  return result.json();
+  const stored = await result.json();
+  const defaultsById = new Map(defaultCatalog.items.map((item) => [item.id, item]));
+  return {
+    ...stored,
+    version: 2,
+    items: Array.isArray(stored.items)
+      ? stored.items.map((item) => ({ ...defaultsById.get(item.id), ...item }))
+      : defaultCatalog.items,
+  };
 }
 
 export default async function handler(request, response) {
@@ -74,7 +92,7 @@ export default async function handler(request, response) {
   if (!items.length) return response.status(400).json({ error: "Add at least one catalogue item" });
 
   const catalog = {
-    version: 1,
+    version: 2,
     updatedAt: new Date().toISOString(),
     items,
   };

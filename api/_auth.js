@@ -1,20 +1,22 @@
 import crypto from "node:crypto";
 
-const PASSWORD_SALT = "087e47300383f9579bc4f6d91a48fb1b";
-const PASSWORD_HASH = "68c069d16f1223c0f3f483ca072bc118025056fb1eb26877e096082eb269b9b7";
 const ITERATIONS = 210000;
 
 export function isAuthorized(request) {
   const candidate = request.headers["x-admin-key"];
   if (typeof candidate !== "string" || candidate.length < 20) return false;
 
+  const passwordSalt = process.env.HGP_ADMIN_PASSWORD_SALT;
+  const passwordHash = process.env.HGP_ADMIN_PASSWORD_HASH;
+  if (!passwordSalt || !/^[a-f0-9]{64}$/i.test(passwordHash || "")) return false;
+
   const candidateHash = crypto
-    .pbkdf2Sync(candidate, PASSWORD_SALT, ITERATIONS, 32, "sha256")
+    .pbkdf2Sync(candidate, passwordSalt, ITERATIONS, 32, "sha256")
     .toString("hex");
 
   return crypto.timingSafeEqual(
     Buffer.from(candidateHash, "hex"),
-    Buffer.from(PASSWORD_HASH, "hex"),
+    Buffer.from(passwordHash, "hex"),
   );
 }
 

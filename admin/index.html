@@ -8,28 +8,26 @@
     <link rel="icon" href="../assets/favicon.ico" sizes="any" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main>
       <section class="login-view" id="loginView" aria-labelledby="loginTitle">
-        <div class="login-art" aria-hidden="true">
-          <span>Private workspace</span>
-        </div>
+        <div class="login-art" aria-hidden="true"></div>
         <form class="login-panel" id="loginForm">
           <img src="../assets/brand-lockup.jpg" alt="Home & Garden Pro" />
-          <p class="eyebrow">Catalogue studio</p>
-          <h1 id="loginTitle">Quietly behind the scenes.</h1>
-          <p>Use the private access key supplied to the Home &amp; Garden Pro team.</p>
-          <label for="password">Access key</label>
+          <p class="eyebrow">Private access</p>
+          <h1 id="loginTitle">Home &amp; Garden Pro</h1>
+          <p>Enter the private password to continue to the catalogue studio.</p>
+          <label for="password">Password</label>
           <div class="password-row">
             <input id="password" name="password" type="password" autocomplete="current-password" required />
             <button class="icon-button" id="togglePassword" type="button" aria-label="Show access key" title="Show access key">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
           </div>
-          <button class="primary-button" type="submit">Open catalogue studio</button>
+          <button class="primary-button" type="submit">Enter</button>
           <p class="form-message" id="loginMessage" role="status"></p>
         </form>
       </section>

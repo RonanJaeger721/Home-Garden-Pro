@@ -8,8 +8,8 @@
   --clay: #a26343;
   --stone: #77766f;
   --line: rgba(23, 32, 25, 0.14);
-  --serif: "Cormorant Garamond", Georgia, serif;
-  --sans: "Manrope", Arial, sans-serif;
+  --serif: "Inter", Arial, sans-serif;
+  --sans: "Inter", Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -39,47 +39,42 @@ a:focus-visible {
 }
 
 .login-view {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(340px, 1.1fr) minmax(420px, 0.9fr);
+  place-items: center;
   min-height: 100svh;
-  background: var(--white);
+  padding: 24px;
+  overflow: hidden;
+  background: var(--forest-deep);
 }
 
 .login-art {
-  position: relative;
-  min-height: 100svh;
-  background: linear-gradient(140deg, rgba(13, 44, 29, 0.08), rgba(13, 44, 29, 0.58)), url("../assets/client-sculptures.webp") center / cover no-repeat;
+  position: absolute;
+  inset: 0;
+  min-height: 100%;
+  background: linear-gradient(90deg, rgba(13,44,29,.76), rgba(13,44,29,.42)), url("../assets/catalog/hero-storefront.webp") center / cover no-repeat;
+  animation: loginFade 1.2s ease both;
 }
 
-.login-art::after {
-  content: "";
-  position: absolute;
-  inset: 26px;
-  border: 1px solid rgba(255,255,255,.44);
-  border-radius: 4px;
-}
-
-.login-art span {
-  position: absolute;
-  z-index: 1;
-  bottom: 54px;
-  left: 56px;
-  color: rgba(255,255,255,.86);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
+@keyframes loginFade { from { opacity: 0; transform: scale(1.02); } }
 
 .login-panel {
-  align-self: center;
-  width: min(460px, calc(100% - 80px));
-  margin-inline: auto;
+  position: relative;
+  z-index: 2;
+  width: min(430px, 100%);
+  padding: 38px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(244,243,238,.94);
+  backdrop-filter: blur(18px);
+  animation: panelIn .75s cubic-bezier(.22,1,.36,1) both;
 }
+
+@keyframes panelIn { from { opacity: 0; transform: translateY(15px); } }
 
 .login-panel > img,
 .studio-brand img {
-  width: 210px;
+  width: 180px;
+  clip-path: polygon(0 0, 88% 0, 88% 16%, 100% 16%, 100% 100%, 0 100%);
   mix-blend-mode: multiply;
 }
 
@@ -93,8 +88,8 @@ a:focus-visible {
 }
 
 h1, h2 { margin: 0; font-family: var(--serif); font-weight: 500; letter-spacing: 0; }
-h1 { font-size: clamp(54px, 6vw, 78px); line-height: .9; }
-h2 { font-size: clamp(40px, 5vw, 60px); line-height: .95; }
+h1 { font-size: clamp(34px, 5vw, 48px); line-height: 1.04; }
+h2 { font-size: clamp(30px, 4vw, 44px); line-height: 1.05; }
 
 .login-panel > p:not(.eyebrow):not(.form-message) {
   max-width: 390px;
@@ -139,7 +134,7 @@ textarea {
   min-height: 48px;
   padding: 0 20px;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: 2px;
   font-size: 11px;
   font-weight: 700;
   transition: transform 180ms ease, background 180ms ease, color 180ms ease;
@@ -270,9 +265,6 @@ textarea {
 .save-bar .primary-button { color: var(--forest); background: var(--white); }
 
 @media (max-width: 900px) {
-  .login-view { grid-template-columns: 1fr; }
-  .login-art { min-height: 36svh; }
-  .login-panel { padding-block: 60px; }
   .studio-header { grid-template-columns: 1fr auto; padding-inline: 20px; }
   .header-status { display: none; }
   .studio-shell { width: min(100% - 32px, 760px); }
@@ -284,13 +276,11 @@ textarea {
 }
 
 @media (max-width: 620px) {
-  .login-art { min-height: 30svh; }
-  .login-art span { bottom: 36px; left: 34px; }
-  .login-art::after { inset: 14px; }
-  .login-panel { width: calc(100% - 32px); padding-block: 42px; }
-  .login-panel > img { width: 180px; }
+  .login-view { padding: 16px; }
+  .login-panel { width: 100%; padding: 28px 22px; }
+  .login-panel > img { width: 160px; }
   .eyebrow { margin-top: 36px; }
-  h1 { font-size: 52px; }
+  h1 { font-size: 34px; }
   .studio-header { min-height: 66px; }
   .studio-brand img { width: 145px; }
   .studio-intro { padding-bottom: 38px; }

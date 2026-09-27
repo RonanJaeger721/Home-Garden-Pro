@@ -67,6 +67,86 @@ window.addEventListener(
 
 updateOnScroll();
 
+const catalogueList = document.querySelector("#catalogueList");
+
+function estimateLabel(item) {
+  if (!item.showEstimate) return "";
+  const minimum = Number.isFinite(Number(item.estimateMin)) ? Number(item.estimateMin) : null;
+  const maximum = Number.isFinite(Number(item.estimateMax)) ? Number(item.estimateMax) : null;
+  const money = (value) => new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
+
+  if (minimum !== null && maximum !== null) return `Est. US$${money(minimum)}–${money(maximum)}`;
+  if (minimum !== null) return `Est. from US$${money(minimum)}`;
+  if (maximum !== null) return `Est. up to US$${money(maximum)}`;
+  return "";
+}
+
+function createCatalogueItem(item, index) {
+  const link = document.createElement("a");
+  const enquiry = `Hello, I'm interested in the ${item.name}. Could you tell me about current availability?`;
+  link.className = "collection-item";
+  link.href = `https://wa.me/263772302335?text=${encodeURIComponent(enquiry)}`;
+
+  const number = document.createElement("span");
+  number.className = "item-number";
+  number.textContent = String(index + 1).padStart(2, "0");
+
+  const thumb = document.createElement("span");
+  thumb.className = "item-thumb";
+  const image = document.createElement("img");
+  image.src = item.image || "assets/client-round-planters.webp";
+  image.alt = item.alt || item.name;
+  image.width = 1080;
+  image.height = 1080;
+  image.loading = "lazy";
+  image.decoding = "async";
+  image.addEventListener("error", () => {
+    image.src = "assets/client-round-planters.webp";
+  }, { once: true });
+  thumb.append(image);
+
+  const name = document.createElement("span");
+  name.className = "item-name";
+  name.append(document.createTextNode(item.name));
+  const category = document.createElement("small");
+  category.textContent = item.category || "Garden piece";
+  name.append(category);
+
+  link.append(number, thumb, name);
+
+  const estimate = estimateLabel(item);
+  if (estimate) {
+    const price = document.createElement("span");
+    price.className = "item-estimate";
+    price.textContent = estimate;
+    link.append(price);
+  }
+
+  const arrow = document.createElement("span");
+  arrow.className = "item-arrow";
+  arrow.setAttribute("aria-hidden", "true");
+  arrow.textContent = "↗";
+  link.append(arrow);
+  return link;
+}
+
+async function loadCatalogue() {
+  if (!catalogueList) return;
+
+  try {
+    const response = await fetch("/api/catalog", { headers: { Accept: "application/json" } });
+    if (!response.ok || !response.headers.get("content-type")?.includes("application/json")) return;
+    const catalog = await response.json();
+    const visibleItems = Array.isArray(catalog.items) ? catalog.items.filter((item) => item.visible !== false) : [];
+    if (!visibleItems.length) return;
+    catalogueList.replaceChildren(...visibleItems.map(createCatalogueItem));
+  } catch {
+    // Keep the source catalogue in place if the live endpoint is unavailable.
+  }
+}
+
+loadCatalogue();
+
 const field = document.querySelector("#rippleField");
 const canvas = document.querySelector("#rippleCanvas");
 const context = canvas?.getContext("2d");

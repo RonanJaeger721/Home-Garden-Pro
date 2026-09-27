@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "updatedAt": null,
+  "items": [
+    {
+      "id": "indiana-brown",
+      "name": "Indiana Brown",
+      "category": "Garden sculpture",
+      "image": "/assets/client-indiana.webp",
+      "alt": "Indiana Brown garden sculpture",
+      "visible": true,
+      "featured": true,
+      "estimateMin": null,
+      "estimateMax": null,
+      "showEstimate": false
+    },
+    {
+      "id": "funduzi-granite",
+      "name": "Funduzi Granite",
+      "category": "Tall concrete vessel",
+      "image": "/assets/client-funduzi.webp",
+      "alt": "Funduzi Granite concrete pot",
+      "visible": true,
+      "featured": true,
+      "estimateMin": null,
+      "estimateMax": null,
+      "showEstimate": false
+    },
+    {
+      "id": "water-feature",
+      "name": "Water Feature",
+      "category": "Still water focal point",
+      "image": "/assets/client-water-feature.webp",
+      "alt": "Circular concrete water feature",
+      "visible": true,
+      "featured": true,
+      "estimateMin": null,
+      "estimateMax": null,
+      "showEstimate": false
+    },
+    {
+      "id": "curo-trough",
+      "name": "Curo Trough",
+      "category": "Linear garden trough",
+      "image": "/assets/client-curo.webp",
+      "alt": "Curo concrete trough",
+      "visible": true,
+      "featured": false,
+      "estimateMin": null,
+      "estimateMax": null,
+      "showEstimate": false
+    },
+    {
+      "id": "round-planters",
+      "name": "Round Planters",
+      "category": "Sculptural planter set",
+      "image": "/assets/client-round-planters.webp",
+      "alt": "Round sculptural planters",
+      "visible": true,
+      "featured": true,
+      "estimateMin": null,
+      "estimateMax": null,
+      "showEstimate": false
+    },
+    {
+      "id": "protea",
+      "name": "Protea",
+      "category": "Minimal white planters",
+      "image": "/assets/client-protea.webp",
+      "alt": "Protea white concrete planters",
+      "visible": true,
+      "featured": false,
+      "estimateMin": null,
+      "estimateMax": null,
+      "showEstimate": false
+    }
+  ]
+}

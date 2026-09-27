@@ -33,14 +33,21 @@
       </a>
       <nav aria-label="Main navigation">
         <a href="#collection">Collection</a>
-        <a href="#craft">Craft</a>
-        <a href="#visit">Visit</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#visit">Directions</a>
       </nav>
       <a class="header-cta" href="https://wa.me/263772302335?text=Hello%20Home%20%26%20Garden%20Pro%2C%20may%20I%20see%20your%20current%20catalogue%3F">
         <span>Get the catalogue</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
       </a>
     </header>
+
+    <a class="directions-float" href="https://maps.google.com/?q=18%20Crowhill%20Rd%20Boxpark%20Helensvale%20Harare" target="_blank" rel="noopener" aria-label="Get directions to Home & Garden Pro in Google Maps">
+      <span class="directions-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      </span>
+      <span><small>Find us</small>Google Maps</span>
+    </a>
 
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
@@ -124,49 +131,69 @@
           </p>
         </div>
 
-        <div class="collection-list">
+        <div class="collection-list" id="catalogueList">
           <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Indiana%20Brown%20sculpture." data-reveal>
             <span class="item-number">01</span>
             <span class="item-thumb"><img src="assets/client-indiana.webp" alt="Indiana Brown garden sculpture" width="752" height="1080" loading="lazy" decoding="async" /></span>
             <span class="item-name">Indiana Brown<small>Garden sculpture</small></span>
-            <strong>US$1,100</strong>
             <span class="item-arrow" aria-hidden="true">&#8599;</span>
           </a>
           <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Funduzi%20Granite%20pot." data-reveal>
             <span class="item-number">02</span>
             <span class="item-thumb"><img src="assets/client-funduzi.webp" alt="Funduzi Granite concrete pot" width="864" height="1080" loading="lazy" decoding="async" /></span>
             <span class="item-name">Funduzi Granite<small>Tall concrete vessel</small></span>
-            <strong>US$400</strong>
             <span class="item-arrow" aria-hidden="true">&#8599;</span>
           </a>
           <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20water%20feature." data-reveal>
             <span class="item-number">03</span>
             <span class="item-thumb"><img src="assets/client-water-feature.webp" alt="Circular concrete water feature" width="864" height="1080" loading="lazy" decoding="async" /></span>
             <span class="item-name">Water Feature<small>Still water focal point</small></span>
-            <strong>US$450</strong>
             <span class="item-arrow" aria-hidden="true">&#8599;</span>
           </a>
           <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Curo%20Trough." data-reveal>
             <span class="item-number">04</span>
             <span class="item-thumb"><img src="assets/client-curo.webp" alt="Curo concrete trough" width="864" height="1080" loading="lazy" decoding="async" /></span>
             <span class="item-name">Curo Trough<small>Linear garden trough</small></span>
-            <strong>US$300</strong>
             <span class="item-arrow" aria-hidden="true">&#8599;</span>
           </a>
           <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Round%20Planters." data-reveal>
             <span class="item-number">05</span>
             <span class="item-thumb"><img src="assets/client-round-planters.webp" alt="Round sculptural planters" width="854" height="1068" loading="lazy" decoding="async" /></span>
             <span class="item-name">Round Planters<small>Sculptural planter set</small></span>
-            <strong>US$1,200</strong>
             <span class="item-arrow" aria-hidden="true">&#8599;</span>
           </a>
           <a class="collection-item" href="https://wa.me/263772302335?text=Hello%2C%20I%27m%20interested%20in%20the%20Protea%20planters." data-reveal>
             <span class="item-number">06</span>
             <span class="item-thumb"><img src="assets/client-protea.webp" alt="Protea white concrete planters" width="864" height="1080" loading="lazy" decoding="async" /></span>
             <span class="item-name">Protea<small>Minimal white planters</small></span>
-            <strong>US$350</strong>
             <span class="item-arrow" aria-hidden="true">&#8599;</span>
           </a>
+        </div>
+      </section>
+
+      <section id="gallery" class="catalogue-ribbon" aria-labelledby="gallery-title">
+        <div class="ribbon-heading section-shell">
+          <div>
+            <div class="section-index light" data-reveal>04 / The yard right now</div>
+            <h2 id="gallery-title" data-reveal>A moving catalogue<br /><em>of form and texture.</em></h2>
+          </div>
+          <p data-reveal>New silhouettes arrive and familiar pieces return in different finishes. Ask us what is available today.</p>
+        </div>
+        <div class="ribbon-window" aria-label="Home & Garden Pro product gallery">
+          <div class="ribbon-track">
+            <figure class="ribbon-card ribbon-tall"><img src="assets/client-funduzi.webp" alt="Tall granite-finish concrete vessels" width="864" height="1080" decoding="async" /><figcaption><span>01</span>Tall vessels</figcaption></figure>
+            <figure class="ribbon-card ribbon-wide"><img src="assets/client-sculptures.webp" alt="Sculptural concrete garden pieces" width="1080" height="720" decoding="async" /><figcaption><span>02</span>Garden sculpture</figcaption></figure>
+            <figure class="ribbon-card ribbon-tall"><img src="assets/client-round-planters.webp" alt="Round sculptural planters" width="854" height="1068" decoding="async" /><figcaption><span>03</span>Rounded forms</figcaption></figure>
+            <figure class="ribbon-card ribbon-wide"><img src="assets/client-storefront.webp" alt="Home & Garden Pro display at Boxpark" width="1080" height="720" decoding="async" /><figcaption><span>04</span>At Boxpark</figcaption></figure>
+            <figure class="ribbon-card ribbon-tall"><img src="assets/client-indiana.webp" alt="Indiana Brown garden sculpture" width="752" height="1080" decoding="async" /><figcaption><span>05</span>Statement pieces</figcaption></figure>
+            <figure class="ribbon-card ribbon-wide"><img src="assets/client-curo.webp" alt="Concrete trough planters" width="864" height="1080" decoding="async" /><figcaption><span>06</span>Low planters</figcaption></figure>
+            <figure class="ribbon-card ribbon-tall" aria-hidden="true"><img src="assets/client-funduzi.webp" alt="" width="864" height="1080" decoding="async" /><figcaption><span>01</span>Tall vessels</figcaption></figure>
+            <figure class="ribbon-card ribbon-wide" aria-hidden="true"><img src="assets/client-sculptures.webp" alt="" width="1080" height="720" decoding="async" /><figcaption><span>02</span>Garden sculpture</figcaption></figure>
+            <figure class="ribbon-card ribbon-tall" aria-hidden="true"><img src="assets/client-round-planters.webp" alt="" width="854" height="1068" decoding="async" /><figcaption><span>03</span>Rounded forms</figcaption></figure>
+            <figure class="ribbon-card ribbon-wide" aria-hidden="true"><img src="assets/client-storefront.webp" alt="" width="1080" height="720" decoding="async" /><figcaption><span>04</span>At Boxpark</figcaption></figure>
+            <figure class="ribbon-card ribbon-tall" aria-hidden="true"><img src="assets/client-indiana.webp" alt="" width="752" height="1080" decoding="async" /><figcaption><span>05</span>Statement pieces</figcaption></figure>
+            <figure class="ribbon-card ribbon-wide" aria-hidden="true"><img src="assets/client-curo.webp" alt="" width="864" height="1080" decoding="async" /><figcaption><span>06</span>Low planters</figcaption></figure>
+          </div>
         </div>
       </section>
 
@@ -183,7 +210,7 @@
           <p>Strong silhouettes.<br />Soft surroundings.</p>
         </div>
         <div class="placing-copy">
-          <div class="section-index" data-reveal>04 / Find the right place</div>
+          <div class="section-index" data-reveal>05 / Find the right place</div>
           <h2 id="placing-title" data-reveal>Start with the space, then choose the piece.</h2>
           <p data-reveal>
             Frame an entrance. Settle a quiet courtyard. Bring weight to an empty
@@ -205,8 +232,9 @@
         </div>
         <div class="visit-actions" data-reveal>
           <a class="button button-light" href="https://wa.me/263772302335?text=Hello%20Home%20%26%20Garden%20Pro%2C%20may%20I%20see%20your%20current%20catalogue%3F">WhatsApp us</a>
-          <a class="round-link" href="https://maps.google.com/?q=18%20Crowhill%20Rd%20Boxpark%20Helensvale%20Harare" aria-label="Open Home & Garden Pro in Google Maps">
+          <a class="map-button" href="https://maps.google.com/?q=18%20Crowhill%20Rd%20Boxpark%20Helensvale%20Harare" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z" /><circle cx="12" cy="10" r="2" /></svg>
+            <span>Open in Google Maps</span>
           </a>
         </div>
       </section>

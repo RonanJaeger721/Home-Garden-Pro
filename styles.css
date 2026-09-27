@@ -111,6 +111,7 @@ button:focus-visible {
 #manifesto,
 #craft,
 #collection,
+#gallery,
 #visit {
   scroll-margin-top: 96px;
 }
@@ -216,6 +217,65 @@ button:focus-visible {
 .header-cta:hover {
   background: var(--forest-deep);
   transform: translateY(-2px);
+}
+
+.directions-float {
+  position: fixed;
+  z-index: 45;
+  right: 22px;
+  bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 62px;
+  padding: 7px 18px 7px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  border-radius: 999px;
+  color: var(--white);
+  background: rgba(13, 44, 29, 0.94);
+  box-shadow: 0 18px 46px rgba(13, 44, 29, 0.26);
+  backdrop-filter: blur(16px);
+  transition: transform 220ms ease, background 220ms ease;
+}
+
+.directions-float:hover {
+  background: var(--forest);
+  transform: translateY(-3px);
+}
+
+.directions-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: var(--forest);
+  background: var(--white);
+}
+
+.directions-icon svg,
+.map-button svg {
+  width: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.directions-float > span:last-child {
+  display: grid;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.directions-float small {
+  margin-bottom: 3px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .hero {
@@ -664,13 +724,14 @@ h2 em {
   line-height: 1.3;
 }
 
-.collection-item strong {
+.item-estimate {
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .item-arrow {
+  grid-column: 5;
   display: grid;
   place-items: center;
   width: 42px;
@@ -688,6 +749,125 @@ h2 em {
 .collection-item:hover .item-number,
 .collection-item:hover .item-name small {
   color: rgba(255, 255, 255, 0.62);
+}
+
+.catalogue-ribbon {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(100px, 12vw, 160px);
+  color: var(--white);
+  background: var(--forest-deep);
+}
+
+.catalogue-ribbon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.38;
+  background: radial-gradient(circle at 78% 22%, rgba(175, 207, 186, 0.18), transparent 30%);
+}
+
+.ribbon-heading {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.42fr);
+  align-items: end;
+  gap: 50px;
+  margin-bottom: clamp(60px, 8vw, 100px);
+}
+
+.ribbon-heading .section-index {
+  margin-bottom: 28px;
+}
+
+.ribbon-heading h2 em {
+  color: #bdd7c7;
+}
+
+.ribbon-heading > p {
+  margin: 0 0 8px;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.ribbon-window {
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.ribbon-track {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  width: max-content;
+  padding-inline: 22px;
+  animation: catalogueGlide 50s linear infinite;
+  will-change: transform;
+}
+
+.ribbon-window:hover .ribbon-track {
+  animation-play-state: paused;
+}
+
+.ribbon-card {
+  position: relative;
+  flex: none;
+  width: clamp(260px, 27vw, 410px);
+  height: clamp(360px, 42vw, 610px);
+  margin: 0;
+  overflow: hidden;
+  background: #1c3629;
+}
+
+.ribbon-card.ribbon-wide {
+  width: clamp(370px, 42vw, 640px);
+  height: clamp(300px, 32vw, 470px);
+}
+
+.ribbon-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.78) contrast(1.02);
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1), filter 500ms ease;
+}
+
+.ribbon-card:hover img {
+  filter: saturate(0.96) contrast(1.02);
+  transform: scale(1.045);
+}
+
+.ribbon-card::after {
+  content: "";
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(transparent, rgba(6, 25, 15, 0.74));
+  pointer-events: none;
+}
+
+.ribbon-card figcaption {
+  position: absolute;
+  z-index: 2;
+  right: 22px;
+  bottom: 20px;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 25px;
+}
+
+.ribbon-card figcaption span {
+  color: rgba(255, 255, 255, 0.54);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
 }
 
 .placing {
@@ -827,6 +1007,26 @@ h2 em {
   transition: color 220ms ease, background 220ms ease, transform 220ms ease;
 }
 
+.map-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 0 22px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: color 220ms ease, background 220ms ease, transform 220ms ease;
+}
+
+.map-button:hover {
+  color: var(--forest);
+  background: var(--white);
+  transform: translateY(-3px);
+}
+
 .round-link:hover {
   color: var(--forest);
   background: var(--white);
@@ -906,6 +1106,10 @@ footer > div a,
   100% { transform: translateY(200%); }
 }
 
+@keyframes catalogueGlide {
+  to { transform: translateX(calc(-50% - 11px)); }
+}
+
 @media (max-width: 980px) {
   :root {
     --shell: min(100% - 48px, 900px);
@@ -934,6 +1138,7 @@ footer > div a,
 
   .manifesto-copy,
   .collection-head,
+  .ribbon-heading,
   .placing {
     grid-template-columns: 1fr;
   }
@@ -953,6 +1158,11 @@ footer > div a,
 
   .placing {
     gap: 70px;
+  }
+
+  .ribbon-heading {
+    align-items: start;
+    gap: 34px;
   }
 
   .placing-visual {
@@ -1126,12 +1336,31 @@ footer > div a,
     font-size: 9px;
   }
 
-  .collection-item strong {
+  .item-estimate {
     font-size: 11px;
+  }
+
+  .catalogue-ribbon {
+    padding-block: 92px;
+  }
+
+  .ribbon-heading {
+    margin-bottom: 56px;
+  }
+
+  .ribbon-card {
+    width: 270px;
+    height: 390px;
+  }
+
+  .ribbon-card.ribbon-wide {
+    width: 370px;
+    height: 310px;
   }
 
   .item-arrow {
     display: none;
+    grid-column: auto;
   }
 
   .placing {
@@ -1154,6 +1383,27 @@ footer > div a,
     padding: 54px 24px;
     border-radius: 36px;
     background-position: 67% center;
+  }
+
+  .visit-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .map-button {
+    min-height: 52px;
+  }
+
+  .directions-float {
+    right: 10px;
+    bottom: 10px;
+    min-height: 56px;
+    padding: 5px 14px 5px 5px;
+  }
+
+  .directions-icon {
+    width: 44px;
+    height: 44px;
   }
 
   .visit::before {
@@ -1188,6 +1438,11 @@ footer > div a,
 
   .hero-image {
     transform: none !important;
+  }
+
+  .ribbon-track {
+    animation: none;
+    overflow-x: auto;
   }
 
   [data-reveal] {

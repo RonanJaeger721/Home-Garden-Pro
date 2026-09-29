@@ -3,6 +3,7 @@ import { isAuthorized, reject } from "./_auth.js";
 import { defaultCatalog } from "./_catalog-default.js";
 
 const CATALOG_PATH = "catalog/current.json";
+const CATALOG_VERSION = 4;
 
 function normalizeText(value, maxLength) {
   return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
@@ -103,7 +104,7 @@ function normalizeSettings(value) {
 function normalizeCatalog(source) {
   const items = Array.isArray(source?.items) ? source.items.map(normalizeItem).filter(Boolean) : [];
   return {
-    version: 3,
+    version: CATALOG_VERSION,
     updatedAt: source?.updatedAt || null,
     settings: normalizeSettings(source?.settings),
     items,
@@ -132,11 +133,17 @@ async function readCatalog() {
   if (!result.ok) throw new Error("Unable to read catalogue");
   const stored = await result.json();
   const defaultsById = new Map(defaultCatalog.items.map((item) => [item.id, item]));
+  const storedItems = Array.isArray(stored.items) ? stored.items : [];
+  const storedIds = new Set(storedItems.map((item) => item.id));
+  const shouldSeedNewDefaults = Number(stored.version || 0) < CATALOG_VERSION;
   return normalizeCatalog({
     ...stored,
     settings: { ...defaultCatalog.settings, ...stored.settings },
-    items: Array.isArray(stored.items)
-      ? stored.items.map((item) => ({ ...defaultsById.get(item.id), ...item }))
+    items: storedItems.length
+      ? [
+          ...storedItems.map((item) => ({ ...defaultsById.get(item.id), ...item })),
+          ...(shouldSeedNewDefaults ? defaultCatalog.items.filter((item) => !storedIds.has(item.id)) : []),
+        ]
       : defaultCatalog.items,
   });
 }
@@ -165,7 +172,7 @@ export default async function handler(request, response) {
   const items = sourceItems.slice(0, 100).map(normalizeItem).filter(Boolean);
   if (!items.length) return response.status(400).json({ error: "Add at least one catalogue item" });
   const catalog = {
-    version: 3,
+    version: CATALOG_VERSION,
     updatedAt: new Date().toISOString(),
     settings: normalizeSettings(request.body?.settings),
     items,

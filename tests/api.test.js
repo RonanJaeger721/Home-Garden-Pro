@@ -40,9 +40,9 @@ test("catalogue GET returns normalized price-hidden data without storage", async
 
   if (previousToken) process.env.BLOB_READ_WRITE_TOKEN = previousToken;
   assert.equal(response.statusCode, 200);
-  assert.equal(response.payload.version, 3);
+  assert.equal(response.payload.version, 4);
   assert.equal(response.payload.settings.whatsappCatalogUrl, "https://wa.me/c/30404207759615");
-  assert.equal(response.payload.items.length, 6);
+  assert.equal(response.payload.items.length, 18);
   assert.ok(response.payload.items.every((item) => item.showPrice === false));
   assert.ok(response.payload.items.every((item) => item.priceFrom === null && item.priceTo === null));
 });
